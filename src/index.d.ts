@@ -1,8 +1,15 @@
 import * as React from 'react';
 import * as Redux from 'redux';
 
+type Actionable = Redux.Action | Redux.ActionCreator<any>
+
 interface LifecycleActions {
-    componentWillMount? : Redux.Action
+    componentWillMount?: Actionable | Array<Actionable>,
+    componentDidMount?: Actionable | Array<Actionable>,
+    componentWillReceiveProps?: Actionable | Array<Actionable>,
+    componentWillUpdate?: Actionable | Array<Actionable>,
+    componentDidUpdate?: Actionable | Array<Actionable>,
+    componentWillUnmount?: Actionable | Array<Actionable>
 }
 
 interface ComponentDecorator {
