@@ -4,7 +4,7 @@
   "description": "A higher-order component to dispatch actions on react lifecycle methods",
   "author": "Michael Peyper",
   "license": "MIT",
-  "main": "dist/index.js",
+  "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "repository": {
     "type": "git",
