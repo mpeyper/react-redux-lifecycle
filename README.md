@@ -7,7 +7,6 @@ Often, actions need to be dispatched as part of the [React lifecycle](https://fa
 Well, no more!  Now you can just wrap your component in this [higher-order component](https://facebook.github.io/react/docs/higher-order-components.html) and remain in your functional bliss.
 
 ## Installation
-------------
 
 ### NPM
 
