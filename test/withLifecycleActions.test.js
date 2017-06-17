@@ -134,48 +134,79 @@ describe('withLifecycleActions Tests', () => {
     expect(mockStore.getActions()).toEqual([testAction('componentWillMount'), testAction('componentWillUnmount')])
   })
 
-  test('should not dispatch action on constructor', () => {
-    let mockStore = configureStore()({})
+  test('should warn about unknown key', () => {
+    const warnFunction = console.warn
 
-    let WrappedComponent = withLifecycleActions({ constructor: testAction('constructor') })(TestComponent)
+    try {
+      console.warn = jest.fn()
 
-    let testComponent = mount(
-      <Provider store={mockStore}>
-        <WrappedComponent message="expected" />
-      </Provider>
-    )
+      let mockStore = configureStore()({})
 
-    expect(testComponent.html()).toEqual("<p>expected</p>")
-    expect(mockStore.getActions()).toEqual([])
+      let WrappedComponent = withLifecycleActions({ render: testAction('render') })(TestComponent)
+
+      let testComponent = mount(
+        <Provider store={mockStore}>
+          <WrappedComponent message="expected" />
+        </Provider>
+      )
+
+      expect(testComponent.html()).toEqual("<p>expected</p>")
+      expect(mockStore.getActions()).toEqual([])
+      expect(console.warn).toBeCalledWith('Unknown key(s) (render) found in lifecycleActions.  ' + 
+        'Allowed keys are componentWillMount, componentDidMount, componentWillReceiveProps, ' + 
+        'componentWillUpdate, componentDidUpdate, componentWillUnmount.'
+      )
+    } finally {
+      console.warn = warnFunction
+    }
   })
 
-  test('should not dispatch action on render', () => {
-    let mockStore = configureStore()({})
+  test('should not warn about unknown key in production', () => {
+    const nodeEnv = process.env.NODE_ENV
+    const warnFunction = console.warn
 
-    let WrappedComponent = withLifecycleActions({ render: testAction('render') })(TestComponent)
+    try {
+      process.env.NODE_ENV = 'production'
+      console.warn = jest.fn()
 
-    let testComponent = mount(
-      <Provider store={mockStore}>
-        <WrappedComponent message="expected" />
-      </Provider>
-    )
+      let mockStore = configureStore()({})
 
-    expect(testComponent.html()).toEqual("<p>expected</p>")
-    expect(mockStore.getActions()).toEqual([])
+      let WrappedComponent = withLifecycleActions({ render: testAction('render') })(TestComponent)
+
+      let testComponent = mount(
+        <Provider store={mockStore}>
+          <WrappedComponent message="expected" />
+        </Provider>
+      )
+
+      expect(testComponent.html()).toEqual("<p>expected</p>")
+      expect(mockStore.getActions()).toEqual([])
+      expect(console.warn).toHaveBeenCalledTimes(0)
+    } finally {
+      process.env.NODE_ENV = nodeEnv
+      console.warn = warnFunction
+    }
   })
 
-  test('should not dispatch action on shouldComponentUpdate', () => {
-    let mockStore = configureStore()({})
+  test('should raise error if invalid shape provided for lifecycle actions', () => {
+    expect(() => withLifecycleActions()).toThrowError('lifecycleActions must be an object.')
+    expect(() => withLifecycleActions(123)).toThrowError('lifecycleActions must be an object.')
+    expect(() => withLifecycleActions("wrong")).toThrowError('lifecycleActions must be an object.')
+    expect(() => withLifecycleActions(["componentWillMount"])).toThrowError('lifecycleActions must be an object.')
+  })
 
-    let WrappedComponent = withLifecycleActions({ shouldComponentUpdate: testAction('shouldComponentUpdate') })(TestComponent)
+  test('should not raise error if invalid shape provided for lifecycle actions if in production', () => {
+    const nodeEnv = process.env.NODE_ENV
 
-    let testComponent = mount(
-      <Provider store={mockStore}>
-        <WrappedComponent message="expected" />
-      </Provider>
-    )
+    try {
+      process.env.NODE_ENV = 'production'
 
-    expect(testComponent.html()).toEqual("<p>expected</p>")
-    expect(mockStore.getActions()).toEqual([])
+      expect(typeof withLifecycleActions()).toEqual("function")
+      expect(typeof withLifecycleActions(123)).toEqual("function")
+      expect(typeof withLifecycleActions("wrong")).toEqual("function")
+      expect(typeof withLifecycleActions(["componentWillMount"])).toEqual("function")
+    } finally {
+      process.env.NODE_ENV = nodeEnv
+    }
   })
 })
