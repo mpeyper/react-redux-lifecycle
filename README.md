@@ -2,7 +2,7 @@ React Redux Lifecycle
 ---------------------
 [![Build Status](https://img.shields.io/travis/mpeyper/react-redux-lifecycle/master.svg?style=flat-square)](https://travis-ci.org/mpeyper/react-redux-lifecycle) 
 [![npm version](https://img.shields.io/npm/v/react-redux-lifecycle.svg?style=flat-square)](https://www.npmjs.com/package/react-redux-lifecycle) 
-[![npm downloads](https://img.shields.io/npm/dm/react-redux-lifecycle.svg?style=flat-square)](https://www.npmjs.com/package/redux)
+[![npm downloads](https://img.shields.io/npm/dm/react-redux-lifecycle.svg?style=flat-square)](https://www.npmjs.com/package/react-redux-lifecycle)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
 
 Often, actions need to be dispatched as part of the [React lifecycle](https://facebook.github.io/react/docs/react-component.html#the-component-lifecycle).  In many cases, the only reason to extend [`React.Component`](https://facebook.github.io/react/docs/react-component.html) instead of using [functional components](https://facebook.github.io/react/docs/components-and-props.html#functional-and-class-components) is to do this.  
