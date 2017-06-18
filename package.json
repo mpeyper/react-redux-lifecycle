@@ -1,6 +1,6 @@
 {
   "name": "react-redux-lifecycle",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A higher-order component to dispatch actions on react lifecycle methods",
   "author": "Michael Peyper",
   "license": "MIT",
