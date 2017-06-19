@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import handleAction from './handleAction'
 
-const INCLUDED_METHODS = [
+export const INCLUDED_METHODS = [
   'componentWillMount',
   'componentDidMount',
   'componentWillReceiveProps',
@@ -11,7 +11,7 @@ const INCLUDED_METHODS = [
   'componentWillUnmount'
 ]
 
-const withLifecycleActions = (lifecycleActions) => {
+export const withLifecycleActions = (lifecycleActions) => {
 
   if (process.env.NODE_ENV !== 'production') {
     console.assert(typeof lifecycleActions === 'object' && !Array.isArray(lifecycleActions), 'lifecycleActions must be an object.')
@@ -49,5 +49,3 @@ const withLifecycleActions = (lifecycleActions) => {
     return connect()(LifeCycleActionsWrapper)
   }
 }
-
-export default withLifecycleActions

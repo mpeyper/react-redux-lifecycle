@@ -1,5 +1,5 @@
 import * as React from 'react'
-import withLifecycleActions from '../../../src'
+import { withLifecycleActions } from '../../../src'
 
 const exampleAction = { type: "TEST" }
 

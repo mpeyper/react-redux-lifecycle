@@ -3,7 +3,7 @@ import { Provider } from 'react-redux'
 import configureStore from 'redux-mock-store'
 import { mount } from 'enzyme'
 
-import withLifecycleActions from '../src/withLifecycleActions'
+import { withLifecycleActions } from '../src/withLifecycleActions'
 
 const TestComponent = ({message}) => <p>{message}</p>
 const testAction = (method) => ({ type: `TEST_ACTION_${method}` })

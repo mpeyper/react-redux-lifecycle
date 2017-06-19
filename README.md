@@ -24,7 +24,7 @@ This assumes that you’re using [npm](http://npmjs.com/) package manager with a
 #### Standard Actions
 
 ```
-import withLifecycleActions from 'react-redux-lifecycle'
+import { withLifecycleActions } from 'react-redux-lifecycle'
 
 const myAction = { type: 'MY_ACTION' }
 
@@ -42,7 +42,7 @@ import MyComponent from './MyComponent'
 #### Action Creators
 
 ```
-import withLifecycleActions from 'react-redux-lifecycle'
+import { withLifecycleActions } from 'react-redux-lifecycle'
 
 const myActionCreator = () => ({ type: 'MY_ACTION' })
 
@@ -62,7 +62,7 @@ import MyComponent from './MyComponent'
 The component props are passed to any functions that are provided
 
 ```
-import withLifecycleActions from 'react-redux-lifecycle'
+import { withLifecycleActions } from 'react-redux-lifecycle'
 
 const myActionCreator = ({ id }) => ({ type: 'MY_ACTION', id })
 
@@ -80,7 +80,7 @@ import MyComponent from './MyComponent'
 #### Multiple Actions
 
 ```
-import withLifecycleActions from 'react-redux-lifecycle'
+import { withLifecycleActions } from 'react-redux-lifecycle'
 
 const myAction = () => { type: 'MY_ACTION' }
 const myActionCreator = () => myAction
@@ -96,12 +96,34 @@ import MyComponent from './MyComponent'
 <MyComponent message="Hello World!" />
 ```
 
+#### Single Method Helpers
+
+Helper functions are available if you only need to dispatch the action on a single lifecycle method.
+
+```
+import { onComponentDidMount } from 'react-redux-lifecycle'
+
+const myAction = { type: 'MY_ACTION' }
+
+const MyComponent = ({ message }) => <div>{message}</div>
+
+export default onComponentDidMount(myAction)(MyComponent)
+
+...
+
+import MyComponent from './MyComponent'
+
+<MyComponent message="Hello World!" />
+```
+
+Basic action, action creators and multiple actions are all supported in the same manner as `withLifecycleActions`.
+
 ### Supported Lifecycle Methods
 
 The following lifecycle methods are supported:
-- `componentWillMount`
-- `componentDidMount`
-- `componentWillReceiveProps`
-- `componentWillUpdate`
-- `componentDidUpdate`
-- `componentWillUnmount`
+- `componentWillMount` (helper: `onComponentWillMount`)
+- `componentDidMount` (helper: `onComponentDidMount`)
+- `componentWillReceiveProps` (helper: `onComponentWillReceiveProps`)
+- `componentWillUpdate` (helper: `onComponentWillUpdate`)
+- `componentDidUpdate` (helper: `onComponentDidUpdate`)
+- `componentWillUnmount` (helper: `onComponentWillUnmount`)

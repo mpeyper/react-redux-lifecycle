@@ -18,4 +18,9 @@ interface ComponentDecorator {
 
 export function withLifecycleActions(lifecycleActions: LifecycleActions): ComponentDecorator
 
-export default withLifecycleActions
+export function onComponentWillMount(action: Actionable): ComponentDecorator
+export function onComponentDidMount(action: Actionable): ComponentDecorator
+export function onComponentWillReceiveProps(action: Actionable): ComponentDecorator
+export function onComponentWillUpdate(action: Actionable): ComponentDecorator
+export function onComponentDidUpdate(action: Actionable): ComponentDecorator
+export function onComponentWillUnmount(action: Actionable): ComponentDecorator

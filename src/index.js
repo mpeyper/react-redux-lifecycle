@@ -1,7 +1,2 @@
-import withLifecycleActions from './withLifecycleActions'
-
-export default withLifecycleActions
-
-export {
-    withLifecycleActions
-}
+export { withLifecycleActions } from './withLifecycleActions'
+export * from './lifecycleWrappers'
