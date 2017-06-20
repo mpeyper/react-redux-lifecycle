@@ -12,12 +12,12 @@
   },
   "scripts": {
     "start": "npm run test:watch",
-    "dist": "babel src --out-dir lib --copy-files",
+    "build": "babel src --out-dir lib --copy-files",
     "lint": "eslint src/ --ext .js --ext .jsx",
     "lint:fix": "eslint src/ --ext .js --ext .jsx --fix",
     "test": "JEST_JUNIT_OUTPUT=./test-reports/test-output.xml jest --coverage",
     "test:watch": "npm test -- --watch",
-    "prepublish": "npm run dist"
+    "prepublish": "npm run build"
   },
   "dependencies": {
     "react-redux": "^5.0.4"
