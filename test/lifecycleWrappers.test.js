@@ -3,19 +3,23 @@ import { Provider } from 'react-redux'
 import configureStore from 'redux-mock-store'
 import { mount } from 'enzyme'
 
-import { 
-    onComponentWillMount, 
-    onComponentDidMount, 
-    onComponentWillReceiveProps,
-    onComponentWillUpdate,
-    onComponentDidUpdate,
-    onComponentWillUnmount
+import {
+  onComponentWillMount,
+  onComponentDidMount,
+  onComponentWillReceiveProps,
+  onComponentWillUpdate,
+  onComponentDidUpdate,
+  onComponentWillUnmount,
+  onComponentDidCatch
 } from '../src/lifecycleWrappers'
 
 const TestComponent = () => <p>TEST</p>
-const testAction = (method) => ({ type: `TEST_ACTION_${method}` })
+const ErrorComponent = () => {
+  throw Error('expected')
+}
+const testAction = method => ({ type: `TEST_ACTION_${method}` })
 
-const updater = (value1, value2) => (Component) => {
+const updater = (value1, value2) => Component => {
   return class Updater extends React.Component {
     constructor() {
       super()
@@ -32,90 +36,120 @@ const updater = (value1, value2) => (Component) => {
   }
 }
 
+const suppressError = f => {
+  const error = console.error
+  try {
+    console.error = () => {}
+    return f()
+  } finally {
+    console.error = error
+  }
+}
+
 describe('lifecycleWrappers Tests', () => {
-    test('should dispatch action on componentWillMount', () => {
-        let mockStore = configureStore()({})
+  test('should dispatch action on componentWillMount', () => {
+    let mockStore = configureStore()({})
 
-        let WrappedComponent = onComponentWillMount(testAction('componentWillMount'))(TestComponent)
+    let WrappedComponent = onComponentWillMount(testAction('componentWillMount'))(TestComponent)
 
-        mount(
-            <Provider store={mockStore}>
-                <WrappedComponent />
-            </Provider>
-        )
+    mount(
+      <Provider store={mockStore}>
+        <WrappedComponent />
+      </Provider>
+    )
 
-        expect(mockStore.getActions()).toEqual([testAction('componentWillMount')])
-    })
+    expect(mockStore.getActions()).toEqual([testAction('componentWillMount')])
+  })
 
-    test('should dispatch action on componentDidMount', () => {
-        let mockStore = configureStore()({})
+  test('should dispatch action on componentDidMount', () => {
+    let mockStore = configureStore()({})
 
-        let WrappedComponent = onComponentDidMount(testAction('componentDidMount'))(TestComponent)
+    let WrappedComponent = onComponentDidMount(testAction('componentDidMount'))(TestComponent)
 
-        mount(
-            <Provider store={mockStore}>
-                <WrappedComponent />
-            </Provider>
-        )
+    mount(
+      <Provider store={mockStore}>
+        <WrappedComponent />
+      </Provider>
+    )
 
-        expect(mockStore.getActions()).toEqual([testAction('componentDidMount')])
-    })
+    expect(mockStore.getActions()).toEqual([testAction('componentDidMount')])
+  })
 
-    test('should dispatch action on componentWillReceiveProps', () => {
-        let mockStore = configureStore()({})
-        
-        let WrappedComponent = updater(1, 2)(onComponentWillReceiveProps(testAction('componentWillReceiveProps'))(TestComponent))
+  test('should dispatch action on componentWillReceiveProps', () => {
+    let mockStore = configureStore()({})
 
-        mount(
-            <Provider store={mockStore}>
-                <WrappedComponent />
-            </Provider>
-        )
+    let WrappedComponent = updater(1, 2)(
+      onComponentWillReceiveProps(testAction('componentWillReceiveProps'))(TestComponent)
+    )
 
-        expect(mockStore.getActions()).toEqual([testAction('componentWillReceiveProps')])
-    })
+    mount(
+      <Provider store={mockStore}>
+        <WrappedComponent />
+      </Provider>
+    )
 
-    test('should dispatch action on componentWillUpdate', () => {
-        let mockStore = configureStore()({})
-        
-        let WrappedComponent = updater(1, 2)(onComponentWillUpdate(testAction('componentWillUpdate'))(TestComponent))
+    expect(mockStore.getActions()).toEqual([testAction('componentWillReceiveProps')])
+  })
 
-        mount(
-            <Provider store={mockStore}>
-                <WrappedComponent />
-            </Provider>
-        )
+  test('should dispatch action on componentWillUpdate', () => {
+    let mockStore = configureStore()({})
 
-        expect(mockStore.getActions()).toEqual([testAction('componentWillUpdate')])
-    })
+    let WrappedComponent = updater(1, 2)(onComponentWillUpdate(testAction('componentWillUpdate'))(TestComponent))
 
-    test('should dispatch action on componentDidUpdate', () => {
-        let mockStore = configureStore()({})
-        
-        let WrappedComponent = updater("wrong", "expected")(onComponentDidUpdate(testAction('componentDidUpdate'))(TestComponent))
+    mount(
+      <Provider store={mockStore}>
+        <WrappedComponent />
+      </Provider>
+    )
 
-        mount(
-            <Provider store={mockStore}>
-                <WrappedComponent />
-            </Provider>
-        )
+    expect(mockStore.getActions()).toEqual([testAction('componentWillUpdate')])
+  })
 
-        expect(mockStore.getActions()).toEqual([testAction('componentDidUpdate')])
-    })
+  test('should dispatch action on componentDidUpdate', () => {
+    let mockStore = configureStore()({})
 
-    test('should dispatch action on componentWillUnmount', () => {
-        let mockStore = configureStore()({})
-        
-        let WrappedComponent = onComponentWillUnmount(testAction('componentWillUnmount'))(TestComponent)
+    let WrappedComponent = updater('wrong', 'expected')(
+      onComponentDidUpdate(testAction('componentDidUpdate'))(TestComponent)
+    )
 
-        let testComponent = mount(
-            <Provider store={mockStore}>
-                <WrappedComponent />
-            </Provider>
-        )
+    mount(
+      <Provider store={mockStore}>
+        <WrappedComponent />
+      </Provider>
+    )
 
-        testComponent.unmount()
+    expect(mockStore.getActions()).toEqual([testAction('componentDidUpdate')])
+  })
 
-        expect(mockStore.getActions()).toEqual([testAction('componentWillUnmount')])
-    })
+  test('should dispatch action on componentWillUnmount', () => {
+    let mockStore = configureStore()({})
+
+    let WrappedComponent = onComponentWillUnmount(testAction('componentWillUnmount'))(TestComponent)
+
+    let testComponent = mount(
+      <Provider store={mockStore}>
+        <WrappedComponent />
+      </Provider>
+    )
+
+    testComponent.unmount()
+
+    expect(mockStore.getActions()).toEqual([testAction('componentWillUnmount')])
+  })
+
+  test('should dispatch action on componentDidCatch', () => {
+    let mockStore = configureStore()({})
+
+    let WrappedComponent = onComponentDidCatch(testAction('componentDidCatch'))(ErrorComponent)
+
+    suppressError(() =>
+      mount(
+        <Provider store={mockStore}>
+          <WrappedComponent />
+        </Provider>
+      )
+    )
+
+    expect(mockStore.getActions()).toEqual([testAction('componentDidCatch')])
+  })
 })

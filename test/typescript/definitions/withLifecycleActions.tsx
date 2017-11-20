@@ -1,15 +1,16 @@
 import * as React from 'react'
 import { withLifecycleActions } from '../../../src'
 
-const exampleAction = { type: "TEST" }
+const exampleAction = { type: 'TEST' }
 
 const lifeCycleActions = {
-    componentWillMount: exampleAction,
-    componentDidMount: () => exampleAction,
-    componentWillReceiveProps: [exampleAction],
-    componentWillUpdate: [exampleAction, exampleAction],
-    componentDidUpdate: [() => exampleAction, () => exampleAction],
-    componentWillUnmount: [exampleAction, () => exampleAction]
+  componentWillMount: exampleAction,
+  componentDidMount: () => exampleAction,
+  componentWillReceiveProps: [exampleAction],
+  componentWillUpdate: [exampleAction, exampleAction],
+  componentDidUpdate: [() => exampleAction, () => exampleAction],
+  componentWillUnmount: [exampleAction, () => exampleAction],
+  componentDidCatch: [() => exampleAction, exampleAction]
 }
 
 const Component = () => <div>Test</div>

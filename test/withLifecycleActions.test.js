@@ -5,10 +5,13 @@ import { mount } from 'enzyme'
 
 import { withLifecycleActions } from '../src/withLifecycleActions'
 
-const TestComponent = ({message}) => <p>{message}</p>
-const testAction = (method) => ({ type: `TEST_ACTION_${method}` })
+const TestComponent = ({ message }) => <p>{message}</p>
+const ErrorComponent = () => {
+  throw Error('expected')
+}
+const testAction = method => ({ type: `TEST_ACTION_${method}` })
 
-const updater = (message1, message2) => (Component) => {
+const updater = (message1, message2) => Component => {
   return class Updater extends React.Component {
     constructor() {
       super()
@@ -25,12 +28,23 @@ const updater = (message1, message2) => (Component) => {
   }
 }
 
-describe('withLifecycleActions Tests', () => {
+const suppressError = f => {
+  const error = console.error
+  try {
+    console.error = () => {}
+    return f()
+  } finally {
+    console.error = error
+  }
+}
 
+describe('withLifecycleActions Tests', () => {
   test('should dispatch action on componentWillMount', () => {
     let mockStore = configureStore()({})
 
-    let WrappedComponent = withLifecycleActions({ componentWillMount: testAction('componentWillMount') })(TestComponent)
+    let WrappedComponent = withLifecycleActions({
+      componentWillMount: testAction('componentWillMount')
+    })(TestComponent)
 
     let testComponent = mount(
       <Provider store={mockStore}>
@@ -38,14 +52,16 @@ describe('withLifecycleActions Tests', () => {
       </Provider>
     )
 
-    expect(testComponent.html()).toEqual("<p>expected</p>")
+    expect(testComponent.html()).toEqual('<p>expected</p>')
     expect(mockStore.getActions()).toEqual([testAction('componentWillMount')])
   })
 
   test('should dispatch action on componentDidMount', () => {
     let mockStore = configureStore()({})
 
-    let WrappedComponent = withLifecycleActions({ componentDidMount: testAction('componentDidMount') })(TestComponent)
+    let WrappedComponent = withLifecycleActions({
+      componentDidMount: testAction('componentDidMount')
+    })(TestComponent)
 
     let testComponent = mount(
       <Provider store={mockStore}>
@@ -53,14 +69,18 @@ describe('withLifecycleActions Tests', () => {
       </Provider>
     )
 
-    expect(testComponent.html()).toEqual("<p>expected</p>")
+    expect(testComponent.html()).toEqual('<p>expected</p>')
     expect(mockStore.getActions()).toEqual([testAction('componentDidMount')])
   })
 
   test('should dispatch action on componentWillReceiveProps', () => {
     let mockStore = configureStore()({})
-    
-    let WrappedComponent = updater("wrong", "expected")(withLifecycleActions({ componentWillReceiveProps: testAction('componentWillReceiveProps') })(TestComponent))
+
+    let WrappedComponent = updater('wrong', 'expected')(
+      withLifecycleActions({
+        componentWillReceiveProps: testAction('componentWillReceiveProps')
+      })(TestComponent)
+    )
 
     let testComponent = mount(
       <Provider store={mockStore}>
@@ -68,14 +88,18 @@ describe('withLifecycleActions Tests', () => {
       </Provider>
     )
 
-    expect(testComponent.html()).toEqual("<p>expected</p>")
+    expect(testComponent.html()).toEqual('<p>expected</p>')
     expect(mockStore.getActions()).toEqual([testAction('componentWillReceiveProps')])
   })
 
   test('should dispatch action on componentWillUpdate', () => {
     let mockStore = configureStore()({})
-    
-    let WrappedComponent = updater("wrong", "expected")(withLifecycleActions({ componentWillUpdate: testAction('componentWillUpdate') })(TestComponent))
+
+    let WrappedComponent = updater('wrong', 'expected')(
+      withLifecycleActions({
+        componentWillUpdate: testAction('componentWillUpdate')
+      })(TestComponent)
+    )
 
     let testComponent = mount(
       <Provider store={mockStore}>
@@ -83,14 +107,18 @@ describe('withLifecycleActions Tests', () => {
       </Provider>
     )
 
-    expect(testComponent.html()).toEqual("<p>expected</p>")
+    expect(testComponent.html()).toEqual('<p>expected</p>')
     expect(mockStore.getActions()).toEqual([testAction('componentWillUpdate')])
   })
 
   test('should dispatch action on componentDidUpdate', () => {
     let mockStore = configureStore()({})
-    
-    let WrappedComponent = updater("wrong", "expected")(withLifecycleActions({ componentDidUpdate: testAction('componentDidUpdate') })(TestComponent))
+
+    let WrappedComponent = updater('wrong', 'expected')(
+      withLifecycleActions({
+        componentDidUpdate: testAction('componentDidUpdate')
+      })(TestComponent)
+    )
 
     let testComponent = mount(
       <Provider store={mockStore}>
@@ -98,14 +126,16 @@ describe('withLifecycleActions Tests', () => {
       </Provider>
     )
 
-    expect(testComponent.html()).toEqual("<p>expected</p>")
+    expect(testComponent.html()).toEqual('<p>expected</p>')
     expect(mockStore.getActions()).toEqual([testAction('componentDidUpdate')])
   })
 
   test('should dispatch action on componentWillUnmount', () => {
     let mockStore = configureStore()({})
-    
-    let WrappedComponent = withLifecycleActions({ componentWillUnmount: testAction('componentWillUnmount') })(TestComponent)
+
+    let WrappedComponent = withLifecycleActions({
+      componentWillUnmount: testAction('componentWillUnmount')
+    })(TestComponent)
 
     let testComponent = mount(
       <Provider store={mockStore}>
@@ -118,10 +148,31 @@ describe('withLifecycleActions Tests', () => {
     expect(mockStore.getActions()).toEqual([testAction('componentWillUnmount')])
   })
 
+  test('should dispatch action on componentDidCatch', () => {
+    let mockStore = configureStore()({})
+
+    let WrappedComponent = withLifecycleActions({
+      componentDidCatch: testAction('componentDidCatch')
+    })(ErrorComponent)
+
+    suppressError(() =>
+      mount(
+        <Provider store={mockStore}>
+          <WrappedComponent />
+        </Provider>
+      )
+    )
+
+    expect(mockStore.getActions()).toEqual([testAction('componentDidCatch')])
+  })
+
   test('should dispatch action on multiple lifecycle methods', () => {
     let mockStore = configureStore()({})
-    
-    let WrappedComponent = withLifecycleActions({ componentWillMount: testAction('componentWillMount'), componentWillUnmount: testAction('componentWillUnmount') })(TestComponent)
+
+    let WrappedComponent = withLifecycleActions({
+      componentWillMount: testAction('componentWillMount'),
+      componentWillUnmount: testAction('componentWillUnmount')
+    })(TestComponent)
 
     let testComponent = mount(
       <Provider store={mockStore}>
@@ -142,7 +193,9 @@ describe('withLifecycleActions Tests', () => {
 
       let mockStore = configureStore()({})
 
-      let WrappedComponent = withLifecycleActions({ render: testAction('render') })(TestComponent)
+      let WrappedComponent = withLifecycleActions({
+        render: testAction('render')
+      })(TestComponent)
 
       let testComponent = mount(
         <Provider store={mockStore}>
@@ -150,11 +203,12 @@ describe('withLifecycleActions Tests', () => {
         </Provider>
       )
 
-      expect(testComponent.html()).toEqual("<p>expected</p>")
+      expect(testComponent.html()).toEqual('<p>expected</p>')
       expect(mockStore.getActions()).toEqual([])
-      expect(console.warn).toBeCalledWith('Unknown key(s) (render) found in lifecycleActions.  ' + 
-        'Allowed keys are componentWillMount, componentDidMount, componentWillReceiveProps, ' + 
-        'componentWillUpdate, componentDidUpdate, componentWillUnmount.'
+      expect(console.warn).toBeCalledWith(
+        'Unknown key(s) (render) found in lifecycleActions.  ' +
+          'Allowed keys are componentWillMount, componentDidMount, componentWillReceiveProps, ' +
+          'componentWillUpdate, componentDidUpdate, componentWillUnmount, componentDidCatch.'
       )
     } finally {
       console.warn = warnFunction
@@ -171,7 +225,9 @@ describe('withLifecycleActions Tests', () => {
 
       let mockStore = configureStore()({})
 
-      let WrappedComponent = withLifecycleActions({ render: testAction('render') })(TestComponent)
+      let WrappedComponent = withLifecycleActions({
+        render: testAction('render')
+      })(TestComponent)
 
       let testComponent = mount(
         <Provider store={mockStore}>
@@ -179,7 +235,7 @@ describe('withLifecycleActions Tests', () => {
         </Provider>
       )
 
-      expect(testComponent.html()).toEqual("<p>expected</p>")
+      expect(testComponent.html()).toEqual('<p>expected</p>')
       expect(mockStore.getActions()).toEqual([])
       expect(console.warn).toHaveBeenCalledTimes(0)
     } finally {
@@ -191,8 +247,8 @@ describe('withLifecycleActions Tests', () => {
   test('should raise error if invalid shape provided for lifecycle actions', () => {
     expect(() => withLifecycleActions()).toThrowError('lifecycleActions must be an object.')
     expect(() => withLifecycleActions(123)).toThrowError('lifecycleActions must be an object.')
-    expect(() => withLifecycleActions("wrong")).toThrowError('lifecycleActions must be an object.')
-    expect(() => withLifecycleActions(["componentWillMount"])).toThrowError('lifecycleActions must be an object.')
+    expect(() => withLifecycleActions('wrong')).toThrowError('lifecycleActions must be an object.')
+    expect(() => withLifecycleActions(['componentWillMount'])).toThrowError('lifecycleActions must be an object.')
   })
 
   test('should not raise error if invalid shape provided for lifecycle actions if in production', () => {
@@ -201,10 +257,10 @@ describe('withLifecycleActions Tests', () => {
     try {
       process.env.NODE_ENV = 'production'
 
-      expect(typeof withLifecycleActions()).toEqual("function")
-      expect(typeof withLifecycleActions(123)).toEqual("function")
-      expect(typeof withLifecycleActions("wrong")).toEqual("function")
-      expect(typeof withLifecycleActions(["componentWillMount"])).toEqual("function")
+      expect(typeof withLifecycleActions()).toEqual('function')
+      expect(typeof withLifecycleActions(123)).toEqual('function')
+      expect(typeof withLifecycleActions('wrong')).toEqual('function')
+      expect(typeof withLifecycleActions(['componentWillMount'])).toEqual('function')
     } finally {
       process.env.NODE_ENV = nodeEnv
     }

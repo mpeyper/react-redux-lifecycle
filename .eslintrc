@@ -9,17 +9,14 @@
     "ecmaVersion": 6
   },
   "globals": {
-    "assert": true,
     "expect": true,
-    "sinon": true
+    "jest": true
   },
   "parser": "babel-eslint",
-  "plugins": [
-    "react"
-  ],
+  "plugins": ["react"],
   "extends": ["eslint:recommended", "plugin:react/recommended"],
   "rules": {
-    "no-console": ["warn", { "allow": ["assert"] }],
+    "no-console": ["warn", { "allow": ["assert", "warn", "error"] }],
     "react/prop-types": ["error", { "skipUndeclared": true }] 
   }
 }
