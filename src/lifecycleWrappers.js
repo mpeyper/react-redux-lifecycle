@@ -1,8 +1,9 @@
-import { withLifecycleActions, INCLUDED_METHODS } from './withLifecycleActions'
+import { withLifecycleActions } from './withLifecycleActions'
 
-const capitalizeFirstLetter = string => string.charAt(0).toUpperCase() + string.slice(1)
-
-INCLUDED_METHODS.forEach(
-  method =>
-    (module.exports[`on${capitalizeFirstLetter(method)}`] = action => withLifecycleActions({ [method]: action }))
-)
+export const onComponentWillMount = action => withLifecycleActions({ componentWillMount: action })
+export const onComponentDidMount = action => withLifecycleActions({ componentDidMount: action })
+export const onComponentWillReceiveProps = action => withLifecycleActions({ componentWillReceiveProps: action })
+export const onComponentWillUpdate = action => withLifecycleActions({ componentWillUpdate: action })
+export const onComponentDidUpdate = action => withLifecycleActions({ componentDidUpdate: action })
+export const onComponentWillUnmount = action => withLifecycleActions({ componentWillUnmount: action })
+export const onComponentDidCatch = action => withLifecycleActions({ componentDidCatch: action })

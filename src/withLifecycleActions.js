@@ -4,7 +4,7 @@ import hoistNonReactStatics from 'hoist-non-react-statics'
 import wrapDisplayName from 'recompose/wrapDisplayName'
 import handleAction from './handleAction'
 
-export const INCLUDED_METHODS = [
+const INCLUDED_METHODS = [
   'componentWillMount',
   'componentDidMount',
   'componentWillReceiveProps',
