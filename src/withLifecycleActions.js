@@ -1,5 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import hoistNonReactStatics from 'hoist-non-react-statics'
+import wrapDisplayName from 'recompose/wrapDisplayName'
 import handleAction from './handleAction'
 
 export const INCLUDED_METHODS = [
@@ -14,10 +16,9 @@ export const INCLUDED_METHODS = [
 
 export const withLifecycleActions = lifecycleActions => {
   if (process.env.NODE_ENV !== 'production') {
-    console.assert(
-      typeof lifecycleActions === 'object' && !Array.isArray(lifecycleActions),
-      'lifecycleActions must be an object.'
-    )
+    if (typeof lifecycleActions !== 'object' || Array.isArray(lifecycleActions)) {
+      throw TypeError('lifecycleActions must be an object.')
+    }
   }
 
   const lifecycleActionsKeys = Object.keys(lifecycleActions || {})
@@ -59,6 +60,10 @@ export const withLifecycleActions = lifecycleActions => {
         return <Component {...this.getPassThroughProps()} />
       }
     }
+
+    hoistNonReactStatics(LifeCycleActionsWrapper, Component)
+
+    LifeCycleActionsWrapper.displayName = wrapDisplayName(Component, 'LifeCycleActions')
 
     return connect()(LifeCycleActionsWrapper)
   }

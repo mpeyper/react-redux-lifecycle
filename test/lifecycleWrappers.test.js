@@ -48,9 +48,9 @@ const suppressError = f => {
 
 describe('lifecycleWrappers Tests', () => {
   test('should dispatch action on componentWillMount', () => {
-    let mockStore = configureStore()({})
+    const mockStore = configureStore()({})
 
-    let WrappedComponent = onComponentWillMount(testAction('componentWillMount'))(TestComponent)
+    const WrappedComponent = onComponentWillMount(testAction('componentWillMount'))(TestComponent)
 
     mount(
       <Provider store={mockStore}>
@@ -62,9 +62,9 @@ describe('lifecycleWrappers Tests', () => {
   })
 
   test('should dispatch action on componentDidMount', () => {
-    let mockStore = configureStore()({})
+    const mockStore = configureStore()({})
 
-    let WrappedComponent = onComponentDidMount(testAction('componentDidMount'))(TestComponent)
+    const WrappedComponent = onComponentDidMount(testAction('componentDidMount'))(TestComponent)
 
     mount(
       <Provider store={mockStore}>
@@ -76,9 +76,9 @@ describe('lifecycleWrappers Tests', () => {
   })
 
   test('should dispatch action on componentWillReceiveProps', () => {
-    let mockStore = configureStore()({})
+    const mockStore = configureStore()({})
 
-    let WrappedComponent = updater(1, 2)(
+    const WrappedComponent = updater(1, 2)(
       onComponentWillReceiveProps(testAction('componentWillReceiveProps'))(TestComponent)
     )
 
@@ -92,9 +92,9 @@ describe('lifecycleWrappers Tests', () => {
   })
 
   test('should dispatch action on componentWillUpdate', () => {
-    let mockStore = configureStore()({})
+    const mockStore = configureStore()({})
 
-    let WrappedComponent = updater(1, 2)(onComponentWillUpdate(testAction('componentWillUpdate'))(TestComponent))
+    const WrappedComponent = updater(1, 2)(onComponentWillUpdate(testAction('componentWillUpdate'))(TestComponent))
 
     mount(
       <Provider store={mockStore}>
@@ -106,9 +106,9 @@ describe('lifecycleWrappers Tests', () => {
   })
 
   test('should dispatch action on componentDidUpdate', () => {
-    let mockStore = configureStore()({})
+    const mockStore = configureStore()({})
 
-    let WrappedComponent = updater('wrong', 'expected')(
+    const WrappedComponent = updater('wrong', 'expected')(
       onComponentDidUpdate(testAction('componentDidUpdate'))(TestComponent)
     )
 
@@ -122,11 +122,11 @@ describe('lifecycleWrappers Tests', () => {
   })
 
   test('should dispatch action on componentWillUnmount', () => {
-    let mockStore = configureStore()({})
+    const mockStore = configureStore()({})
 
-    let WrappedComponent = onComponentWillUnmount(testAction('componentWillUnmount'))(TestComponent)
+    const WrappedComponent = onComponentWillUnmount(testAction('componentWillUnmount'))(TestComponent)
 
-    let testComponent = mount(
+    const testComponent = mount(
       <Provider store={mockStore}>
         <WrappedComponent />
       </Provider>
@@ -138,9 +138,9 @@ describe('lifecycleWrappers Tests', () => {
   })
 
   test('should dispatch action on componentDidCatch', () => {
-    let mockStore = configureStore()({})
+    const mockStore = configureStore()({})
 
-    let WrappedComponent = onComponentDidCatch(testAction('componentDidCatch'))(ErrorComponent)
+    const WrappedComponent = onComponentDidCatch(testAction('componentDidCatch'))(ErrorComponent)
 
     suppressError(() =>
       mount(

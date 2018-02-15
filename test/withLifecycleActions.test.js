@@ -245,10 +245,10 @@ describe('withLifecycleActions Tests', () => {
   })
 
   test('should raise error if invalid shape provided for lifecycle actions', () => {
-    expect(() => withLifecycleActions()).toThrowError('lifecycleActions must be an object.')
-    expect(() => withLifecycleActions(123)).toThrowError('lifecycleActions must be an object.')
-    expect(() => withLifecycleActions('wrong')).toThrowError('lifecycleActions must be an object.')
-    expect(() => withLifecycleActions(['componentWillMount'])).toThrowError('lifecycleActions must be an object.')
+    expect(() => withLifecycleActions()).toThrowError(TypeError, 'lifecycleActions must be an object.')
+    expect(() => withLifecycleActions(123)).toThrowError(TypeError, 'lifecycleActions must be an object.')
+    expect(() => withLifecycleActions('wrong')).toThrowError(TypeError, 'lifecycleActions must be an object.')
+    expect(() => withLifecycleActions(['componentWillMount'])).toThrowError(TypeError, 'lifecycleActions must be an object.')
   })
 
   test('should not raise error if invalid shape provided for lifecycle actions if in production', () => {
