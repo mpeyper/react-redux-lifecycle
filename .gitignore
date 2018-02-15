@@ -5,3 +5,4 @@ test-reports/
 .vscode
 .idea
 lib/
+es/
